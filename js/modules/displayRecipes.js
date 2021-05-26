@@ -1,13 +1,13 @@
 import { recipes } from './recipes.js';
 
-function displayRecipes(array) {
+export function displayRecipes(array) {
 	//MAP ON ALL ARRAY
 	const results = array
 		.map((element) => {
 			const recipeName = element.name;
 			const recipeTime = element.time;
 			const recipeIngredients = element.ingredients;
-			const description = element.description;
+			const recipeDescription = element.description;
 			//MAP ON INGREDIENTS
 			const ingredientsDetails = recipeIngredients
 				.map((ingredient) => {
@@ -34,17 +34,19 @@ function displayRecipes(array) {
 				<h2 class="recipe__title">${recipeName}</h2>
 				<span class="recipe__time">${recipeTime} min</span>
 			</header>
-			<div class="recipe__description">${ingredientsDetails}</div>
+			<div class="recipe__ingredients">${ingredientsDetails}</div>
+			<div class="recipe__description">${recipeDescription}</div>
 		</article>
 		`;
 		})
 		.join('');
+	//GET RESULTS SECTION
+	const resultSection = document.querySelector('.result');
+	//INJECT RESULTS ON RESULTS SECTION
+	resultSection.innerHTML = results;
 	return results;
 }
 
-//INJECTION IN HTML
-const resultSection = document.querySelector('.result');
-//INJECTION OF ALL RECIPES
-resultSection.innerHTML = displayRecipes(recipes);
+displayRecipes(recipes);
 
 export { displayRecipes as default };

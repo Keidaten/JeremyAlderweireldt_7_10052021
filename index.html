@@ -7,6 +7,7 @@
 		<title>Les petits plats</title>
 		<!-- <link rel="stylesheet" href="style.css" /> -->
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css" />
+		<link rel="stylesheet" href="css/style.css" />
 	</head>
 	<body>
 		<header class="header">
@@ -14,16 +15,12 @@
 		</header>
 		<main class="main">
 			<section class="search">
-				<form class="search__input">
-					<input type="text" placeholder="Rechercher un ingrédient, appareil, ustensiles ou une recette." />
+				<form class="input" id="form">
+					<input type="text" id="searchInput" placeholder="Rechercher un ingrédient, appareil, ustensiles ou une recette." aria-label="Rechercher un ingrédient, appareil, ustensiles ou une recette." />
 					<i class="fas fa-search"></i>
 				</form>
-				<div class="search__tags">
-					<div class="search__tags__ingredients"></div>
-					<div class="search__tags__appareils"></div>
-					<div class="search__tags__ustenciles"></div>
-				</div>
-				<div class="search__filter"></div>
+				<div class="tags"></div>
+				<div class="filters"></div>
 			</section>
 			<section class="result" id="result"></section>
 		</main>

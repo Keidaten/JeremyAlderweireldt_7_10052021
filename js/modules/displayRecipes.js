@@ -8,6 +8,8 @@ export function displayRecipes(array) {
 			const recipeTime = element.time;
 			const recipeIngredients = element.ingredients;
 			const recipeDescription = element.description;
+			const recipeAppliance = element.appliance;
+			const recipeUstensils = element.ustensils;
 			//MAP ON INGREDIENTS
 			const ingredientsDetails = recipeIngredients
 				.map((ingredient) => {
@@ -27,15 +29,22 @@ export function displayRecipes(array) {
 					}
 				})
 				.join('');
+			const ustensilsDetails = recipeUstensils
+				.map((ustensils) => {
+					return `<p class="recipe__ustensils">${ustensils}</p>`;
+				})
+				.join('');
 			return `
-		<article class="recipe">
+			<article class="recipe">
 			<img class="recipe__image" src="../images/recipePic.png" alt="${recipeName}" />
 			<header class="recipe__header">
-				<h2 class="recipe__title">${recipeName}</h2>
-				<span class="recipe__time">${recipeTime} min</span>
+			<h2 class="recipe__title">${recipeName}</h2>
+			<span class="recipe__time">${recipeTime} min</span>
 			</header>
 			<div class="recipe__ingredients">${ingredientsDetails}</div>
-			<div class="recipe__description">${recipeDescription}</div>
+			<p class="recipe__description">${recipeDescription}</p>
+			<p class="recipe__appliance">${recipeAppliance}</p>
+			<div class="recipe__ustensils">${ustensilsDetails}</div>
 		</article>
 		`;
 		})

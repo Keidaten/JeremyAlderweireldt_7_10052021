@@ -29,20 +29,30 @@ class AdvancedSearchField {
 }
 
 // Create advanced search
-const searchFilter = document.querySelector('.filters');
-const advancedSearchField = new AdvancedSearchField();
+const displayElements = () => {
+	const resultSection = document.querySelector('.result');
+	const form = document.querySelector('#form');
+	const searchFilter = document.querySelector('.filters');
+	/// DISPLAY SEARCH BUTTON///
+	const advancedSearchField = new AdvancedSearchField();
 
-const deviceAdvancedSearch = advancedSearchField.createAdvancedSearchField('Ustensils');
-searchFilter.insertAdjacentHTML('afterbegin', deviceAdvancedSearch);
+	const deviceAdvancedSearch = advancedSearchField.createAdvancedSearchField('Ustensils');
+	searchFilter.insertAdjacentHTML('afterbegin', deviceAdvancedSearch);
 
-const applianceAdvancedSearch = advancedSearchField.createAdvancedSearchField('Appliance');
-searchFilter.insertAdjacentHTML('afterbegin', applianceAdvancedSearch);
+	const applianceAdvancedSearch = advancedSearchField.createAdvancedSearchField('Appliance');
+	searchFilter.insertAdjacentHTML('afterbegin', applianceAdvancedSearch);
 
-const ingredientsAdvancedSearch = advancedSearchField.createAdvancedSearchField('Ingredients');
-searchFilter.insertAdjacentHTML('afterbegin', ingredientsAdvancedSearch);
+	const ingredientsAdvancedSearch = advancedSearchField.createAdvancedSearchField('Ingredients');
+	searchFilter.insertAdjacentHTML('afterbegin', ingredientsAdvancedSearch);
+
+	// Display all recipes
+	resultSection.innerHTML = displayRecipes(recipes);
+	form.reset();
+};
+displayElements();
 
 //Listen main input
-const advancedSearchTagsSelected = [];
+// const advancedSearchTagsSelected = [];
 
 const searchInput = document.querySelector('#searchInput');
 searchInput.addEventListener('input', (e) => {
@@ -51,7 +61,7 @@ searchInput.addEventListener('input', (e) => {
 		displayDataByserInput(textInput);
 	} else {
 		displayRecipes(recipes);
-		displayIngredients(recipes, '');
+		// displayIngredients(recipes, '');
 	}
 });
 
@@ -69,6 +79,10 @@ searchInput.addEventListener('input', (e) => {
 // 		}
 // 	});
 // };
+
+let IngredientsToDisplay;
+let ApplianceToDisplay;
+let UstensilsToDisplay;
 
 //Display data using user input
 const displayDataByserInput = (input) => {
@@ -88,120 +102,17 @@ const displayDataByserInput = (input) => {
 			recipesToDisplay.push(recipes[i]);
 		}
 		resultSection.innerHTML = displayRecipes(recipesToDisplay);
-		displayIngredients(recipesToDisplay, '');
-		displayAppliances(recipesToDisplay, '');
+		IngredientsToDisplay = recipesToDisplay.flatMap((element) => element.ingredients);
+		displayAdvancedSearchListOfElement(IngredientsToDisplay, 'ingredient', '', 'Ingredients');
+		ApplianceToDisplay = recipesToDisplay;
+		displayAdvancedSearchListOfElement(ApplianceToDisplay, 'appliance', '', 'Appliance');
+		UstensilsToDisplay = recipesToDisplay;
+		displayAdvancedSearchListOfElement(UstensilsToDisplay, 'ustensils', '', 'Ustensils');
 	}
 	if (recipesToDisplay.length == 0) {
 		resultSection.innerHTML = '<p>Désolé, aucune recette ne correspond à votre recherche</p>';
 	}
 };
-// console.log(sessionStorage.getItem('myCat'));
-
-// Display ingredients for advanced search
-function displayIngredients(arr, string) {
-	const arrayOfrecipes = arr.flatMap((element) => element.ingredients);
-	const arrayOfIngredients = arrayOfrecipes.flatMap((element) => element.ingredient);
-	const listIngredient = document.querySelector('.filters__list');
-	if (string !== '') {
-		//si l'input existe on récupères les ingrédients qui possèdent le string et on les affiche
-		const arrayOfIngredient = arrayOfIngredients.filter((element) => {
-			const elementNormalized = normalizeString(element);
-			return elementNormalized.includes(string);
-		});
-		const ingredientsResult = removeDuplicate(arrayOfIngredient);
-		const resultDisplay = ingredientsResult.map((element) => `<li class='filters__list__element  --Ingredients'>${element}</li>`).join('');
-		if (resultDisplay.length > 0) {
-			listIngredient.innerHTML = resultDisplay;
-			const result = document.querySelectorAll('.filters__list__element.--Ingredients');
-			selectIngredientTag(result);
-		} else {
-			listIngredient.innerHTML = `<li class='filters__list__element__error --Ingredients'>Pas de résultats</li>`;
-		}
-	} else {
-		//sinon l'input on affiche les ingrédients sans prendre en compte le string
-		const arrayOfIngredient = arrayOfIngredients.map((element) => element);
-		const ingredientsResult = removeDuplicate(arrayOfIngredient);
-		const resultDisplay = ingredientsResult.map((element) => `<li class='filters__list__element  --Ingredients'>${element}</li>`).join('');
-
-		const listIngredient = document.querySelector('.filters__list.--Ingredients');
-		listIngredient.innerHTML = resultDisplay;
-		const result = document.querySelectorAll('.filters__list__element.--Ingredients');
-		selectIngredientTag(result);
-	}
-}
-displayIngredients(recipes, '');
-
-// Display appliances for advanced search
-function displayAppliances(arr, string) {
-	const arrayOfAppliances = arr.flatMap((element) => element.appliance);
-	// console.log(arrayOfAppliances);
-	if (string !== '') {
-		const arrayOfAppliancesFiltered = arrayOfAppliances.filter((element) => {
-			const elementNormalized = normalizeString(element);
-			return elementNormalized.includes(string);
-		});
-		const applianceSearchResultWithoutDuplicate = removeDuplicate(arrayOfAppliancesFiltered);
-		const resultDisplayed = applianceSearchResultWithoutDuplicate.map((element) => `<li class='search__filter__list__item  --Appliance'>${element}</li>`).join('');
-		if (resultDisplayed.length > 0) {
-			const listAppliance = document.querySelector('.filters__list.--Appliance');
-			listAppliance.innerHTML = resultDisplayed;
-			const result = document.querySelectorAll('.filters__list__item.--Appliance');
-			selectIngredientTag(result);
-		} else {
-			const listAppliance = document.querySelector('.filters__list.--Appliance');
-			listAppliance.innerHTML = `<li class="filters__list__item__error --Appliance">
-				Pas de résultats
-			  </li>`;
-		}
-	} else {
-		arrayOfAppliances.map((element) => element);
-		const applianceSearchResultWithoutDuplicate = removeDuplicate(arrayOfAppliances);
-		const resultDisplayed = applianceSearchResultWithoutDuplicate.map((element) => `<li class='search__filter__list__item  --Appliance'>${element}</li>`).join('');
-
-		// console.log(resultDisplayed);
-		const listAppliance = document.querySelector('.filters__list.--Appliance');
-		// console.log(listAppliance);
-		listAppliance.innerHTML = resultDisplayed;
-		const result = document.querySelectorAll('.search__filter__list__item.--Appliance');
-		selectIngredientTag(result);
-	}
-}
-displayAppliances(recipes, '');
-
-// Display ustensils for advanced search
-function displayUstensils(arr, string) {
-	const arrayOfUstensils = arr.flatMap((element) => element.ustensils);
-	console.log(arrayOfUstensils);
-	if (string !== '') {
-		const arrayOfUstensilsFiltered = arrayOfUstensils.filter((element) => {
-			const elementNormalized = normalizeString(element);
-			return elementNormalized.includes(string);
-		});
-		const ustensilSearchResultWithoutDuplicate = removeDuplicate(arrayOfUstensilsFiltered);
-		const resultDisplayed = ustensilSearchResultWithoutDuplicate.map((element) => `<li class='filters__list__item  --Ustensils'>${element}</li>`).join('');
-		if (resultDisplayed.length > 0) {
-			const listDevice = document.querySelector('.filters__list.--Ustensils');
-			listDevice.innerHTML = resultDisplayed;
-			const result = document.querySelectorAll('.filters__list__item.--Ustensils');
-			selectIngredientTag(result);
-		} else {
-			const listDevice = document.querySelector('.filters__list.--Ustensils');
-			listDevice.innerHTML = `<li class="filters__list__item__error --Ustensils">
-				Pas de résultats
-			  </li>`;
-		}
-	} else {
-		arrayOfUstensils.map((element) => element);
-		const ustensilSearchResultWithoutDuplicate = removeDuplicate(arrayOfUstensils);
-		const resultDisplayed = ustensilSearchResultWithoutDuplicate.map((element) => `<li class='filters__list__item  --Ustensils'>${element}</li>`).join('');
-
-		const listDevice = document.querySelector('.filters__list.--Ustensils');
-		listDevice.innerHTML = resultDisplayed;
-		const result = document.querySelectorAll('.filters__list__item.--Ustensils');
-		selectIngredientTag(result);
-	}
-}
-displayUstensils(recipes, '');
 
 //Tag ingredients selection
 function selectIngredientTag(arr) {
@@ -224,10 +135,40 @@ function selectIngredientTag(arr) {
 		});
 	}
 }
-const mainInput = document.querySelector('#searchInput');
-// const searchInput = document.querySelector('.input');
-// searchInput.value = 'hello';
-// mainInput.value = 'hello';
+
+function displayAdvancedSearchListOfElement(arr, type, input, name) {
+	//tableau des éléments de liste
+	const arrayOfElements = arr.flatMap((element) => element[type]);
+	if (input !== '') {
+		//si l'input existe, on filtre les éléments et on ne retourne que ceux contenant l'input
+		const arrayOfElementsFiltered = arrayOfElements.filter((element) => {
+			const elementNormalized = normalizeString(element);
+			return elementNormalized.includes(input);
+		});
+		const elementReturnedWithoutDuplicate = removeDuplicate(arrayOfElementsFiltered);
+		const resultDisplayed = elementReturnedWithoutDuplicate.map((element) => `<li class='filters__list__item  --${name}'>${element}</li>`).join('');
+		if (resultDisplayed.length > 0) {
+			const elementList = document.querySelector(`.filters__list.--${name}`);
+			elementList.innerHTML = resultDisplayed;
+		} else {
+			const elementList = document.querySelector(`.filters__list.--${name}`);
+			elementList.innerHTML = `<li class="filters__list__item__error --${name}">
+              Pas de résultats
+            </li>`;
+		}
+	} else {
+		arrayOfElements.map((element) => element);
+		const elementReturnedWithoutDuplicate = removeDuplicate(arrayOfElements);
+		const resultDisplayed = elementReturnedWithoutDuplicate.map((element) => `<li class='filters__list__item  --${name}'>${element}</li>`).join('');
+		const elementList = document.querySelector(`.filters__list.--${name}`);
+		elementList.innerHTML = resultDisplayed;
+	}
+}
+
+IngredientsToDisplay = recipes.flatMap((element) => element.ingredients);
+displayAdvancedSearchListOfElement(IngredientsToDisplay, 'ingredient', '', 'Ingredients');
+displayAdvancedSearchListOfElement(recipes, 'appliance', '', 'Appliance');
+displayAdvancedSearchListOfElement(recipes, 'ustensils', '', 'Ustensils');
 
 // Listen ingredient input
 const searchInputIngredient = document.querySelector('#IngredientsInput');
@@ -235,7 +176,7 @@ searchInputIngredient.addEventListener('input', (e) => {
 	const input = e.target.value;
 	console.log(input);
 	const inputNormalized = normalizeString(input);
-	displayIngredients(recipes, inputNormalized);
+	displayAdvancedSearchListOfElement(IngredientsToDisplay, 'ingredient', inputNormalized, 'Ingredients');
 });
 
 // Listen appliance input
@@ -244,7 +185,15 @@ searchInputAppliance.addEventListener('input', (e) => {
 	const input = e.target.value;
 	console.log(input);
 	const inputNormalized = normalizeString(input);
-	displayAppliances(recipes, inputNormalized);
+	displayAdvancedSearchListOfElement(recipes, 'appliance', inputNormalized, 'Appliance');
+});
+
+// Listen unstensils input
+const searchInputDevice = document.querySelector('#UstensilsInput');
+searchInputDevice.addEventListener('input', (e) => {
+	const input = e.target.value;
+	const inputNormalized = normalizeString(input);
+	displayAdvancedSearchListOfElement(recipes, 'ustensils', inputNormalized, 'Ustensils');
 });
 
 // const articleIngredient = document.querySelector('.filters__search');
@@ -278,21 +227,4 @@ function removeDuplicate(array) {
 //Normalize string
 const normalizeString = (string) => {
 	return string.toLocaleLowerCase().replace(/\s+/g, '');
-};
-
-// console.log(recipesCurrentlyDisplayed[0].children[2].innerText);
-
-// recipesCurrentlyDisplayed.forEach((element) => {
-// 	const ustensils = element.children[5].innerText;
-// 	const ingredients = element.children[2].innerText;
-// 	if element
-// });
-
-const searchByTag = (tag) => {
-	for (let i = 0; i < recipesCurrentlyDisplayed.length; i++) {
-		// const tag = document.querySelectorAll('.tags__element');
-		if (recipesCurrentlyDisplayed[i].children[2].innerText.includes(tag)) {
-			console.log('coucou');
-		}
-	}
 };

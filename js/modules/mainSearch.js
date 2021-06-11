@@ -111,6 +111,7 @@ let ApplianceToDisplay;
 let UstensilsToDisplay;
 let arrayOfIngredientsTags = [];
 let arrayOfAppliancesTags = [];
+let arrayOfUstensilsTags = [];
 
 const displayDataByserInput = (arr, input) => {
 	const recipesToDisplay = [];
@@ -296,6 +297,43 @@ const observerListAppliance = new MutationObserver(() => {
 });
 observerListAppliance.observe(applianceList, { subtree: true, childList: true });
 
+///////////////////
+// Ustensils observer
+/////////////////
+const ustensilList = document.querySelector(`.filters__list.--Ustenciles`);
+const observerListUstensil = new MutationObserver(() => {
+	const ustensils = document.querySelectorAll('.filters__list__item.--Ustenciles');
+	for (const ustensil of ustensils) {
+		ustensil.addEventListener('click', () => {
+			ustensil.remove();
+			UstensilsToDisplay = UstensilsToDisplay.filter((element) => element.ustensils !== ustensil.innerText);
+			arrayOfUstensilsTags.push(ustensil.innerText);
+			arrayOfUstensilsTags = removeDuplicate(arrayOfUstensilsTags);
+			const tagsDisplayed = arrayOfUstensilsTags
+				.map((element) => {
+					return `<span class='tags__item --Ustenciles'>${element}<i id="close" class="far fa-times-circle"></i></span>`;
+				})
+				.join('');
+
+			const tagSection = document.querySelector('.tags__Ustenciles');
+			tagSection.innerHTML = tagsDisplayed;
+
+			const tagInput = normalizeString(ustensil.innerText);
+			currentSearch = searchUstensil(currentSearch, tagInput);
+			resultSection.innerHTML = displayRecipes(currentSearch);
+			UstensilsToDisplay = currentSearch.filter((element) => element.ustensils !== ustensil.innerText);
+			displayAdvancedSearchListOfElement(UstensilsToDisplay, 'ustensils', '', 'Ustenciles');
+
+			IngredientsToDisplay = currentSearch.flatMap((element) => element.ingredients);
+			displayAdvancedSearchListOfElement(IngredientsToDisplay, 'ingredient', '', 'Ingredients');
+
+			ApplianceToDisplay = currentSearch;
+			displayAdvancedSearchListOfElement(ApplianceToDisplay, 'appliance', '', 'Appareils');
+		});
+	}
+});
+observerListUstensil.observe(ustensilList, { subtree: true, childList: true });
+
 displayAdvancedSearchListOfElements();
 
 ///////////////////
@@ -353,6 +391,36 @@ function searchByAppliance(arr, input) {
 	});
 	console.log(recipesWithMatchingAppliance);
 	let search = recipesWithMatchingAppliance;
+	removeDuplicate(search);
+	return search;
+}
+
+///////////////////
+// Ustensil search
+/////////////////
+function searchUstensil(arr, input) {
+	const arrayOfUstensils_WithoutUnmatchedByInput = arr.map((element) => {
+		const ustensils = element.ustensils;
+		return ustensils.filter((item) => {
+			const elementNormalized = normalizeString(item);
+			return elementNormalized.includes(input);
+		});
+	});
+	console.log(arrayOfUstensils_WithoutUnmatchedByInput);
+	const arrayOfIndexesOfMatchingElements = [];
+	const notEmpty = (element) => element.length > 0;
+	for (const item of arrayOfUstensils_WithoutUnmatchedByInput) {
+		if (item.findIndex(notEmpty) === 0) {
+			arrayOfIndexesOfMatchingElements.push(arrayOfUstensils_WithoutUnmatchedByInput.indexOf(item));
+		}
+	}
+	const recipesWithMatchingUstensil = [];
+	for (const i of arrayOfIndexesOfMatchingElements) {
+		recipesWithMatchingUstensil.push(arr[i]);
+	}
+
+	///REMOVE DUPLICATE
+	let search = recipesWithMatchingUstensil;
 	removeDuplicate(search);
 	return search;
 }

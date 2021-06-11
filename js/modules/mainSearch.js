@@ -110,6 +110,7 @@ let IngredientsToDisplay;
 let ApplianceToDisplay;
 let UstensilsToDisplay;
 let arrayOfIngredientsTags = [];
+let arrayOfAppliancesTags = [];
 
 const displayDataByserInput = (arr, input) => {
 	const recipesToDisplay = [];
@@ -206,6 +207,9 @@ ustensilSearchInput.addEventListener('input', (e) => {
 ///////////////////
 // Tags gestion
 /////////////////
+///////////////////
+// Ingredients observer
+/////////////////
 const IngredientList = document.querySelector(`.filters__list.--Ingredients`);
 
 //function appelée à chaque modifiction de IngredientList
@@ -216,7 +220,7 @@ const ingredientsListObserver = new MutationObserver(() => {
 	for (const ingredient of ingredients) {
 		ingredient.addEventListener('click', () => {
 			//les ingredients à afficher seront les ingrédients déjà affiché, sauf ceux qui contiennent celui sur lequel on a cliqué => soustraction
-			IngredientsToDisplay = IngredientsToDisplay.filter((element) => element.ingredient !== ingredient.innerText);
+			// IngredientsToDisplay = IngredientsToDisplay.filter((element) => element.ingredient !== ingredient.innerText);
 			// console.log(IngredientsToDisplay);
 			// l'ingrédient cliqué est envoyé dans un tableau
 			arrayOfIngredientsTags.push(ingredient.innerText);
@@ -253,14 +257,56 @@ const ingredientsListObserver = new MutationObserver(() => {
 ingredientsListObserver.observe(IngredientList, { subtree: true, childList: true });
 //On écoute les modifications dans le DOM pour IngredientList, à chaque modification on relance la fonction callback
 
+///////////////////
+// Appliances observer
+/////////////////
+const applianceList = document.querySelector(`.filters__list.--Appareils`);
+const observerListAppliance = new MutationObserver(() => {
+	// console.log("j'acoute");
+	const appliances = document.querySelectorAll(`.filters__list__item.--Appareils`);
+	for (const appliance of appliances) {
+		appliance.addEventListener('click', () => {
+			// appliance.remove();
+			// ApplianceToDisplay = currentSearch.filter((element) => element.appliance !== appliance.innerText);
+			arrayOfAppliancesTags.push(appliance.innerText);
+			arrayOfAppliancesTags = removeDuplicate(arrayOfAppliancesTags);
+			// console.log(applianceTagsArray);
+			const tagsDisplayed = arrayOfAppliancesTags
+				.map((element) => {
+					return `<span class='tags__item --Appareils'>${element}<i id="close" class="far fa-times-circle"></i></span>`;
+				})
+				.join('');
+
+			const tagSection = document.querySelector('.tags__Appareils');
+			tagSection.innerHTML = tagsDisplayed;
+
+			const tagInput = normalizeString(appliance.innerText);
+			currentSearch = searchByAppliance(currentSearch, tagInput);
+			resultSection.innerHTML = displayRecipes(currentSearch);
+			ApplianceToDisplay = currentSearch.filter((element) => element.appliance !== appliance.innerText);
+			displayAdvancedSearchListOfElement(ApplianceToDisplay, 'appliance', '', 'Appareils');
+
+			UstensilsToDisplay = currentSearch;
+			displayAdvancedSearchListOfElement(UstensilsToDisplay, 'ustensils', '', 'Ustenciles');
+
+			IngredientsToDisplay = currentSearch.flatMap((element) => element.ingredients);
+			displayAdvancedSearchListOfElement(IngredientsToDisplay, 'ingredient', '', 'Ingredients');
+		});
+	}
+});
+observerListAppliance.observe(applianceList, { subtree: true, childList: true });
+
 displayAdvancedSearchListOfElements();
 
+///////////////////
+// Ingredients search
+/////////////////
 function searchByIngredient(arr, input) {
 	const arrayOfIngredients_WithoutUnmatchedByInput = arr.map((element) => {
 		const ingredients = element.ingredients; //les ingrédients des éléments du tableau
-		console.log(ingredients);
+		// console.log(ingredients);
 		const ingredientsName = ingredients.map((el) => el.ingredient); //le nom des ingrédients des éléments du tableau
-		console.log(ingredientsName);
+		// console.log(ingredientsName);
 		return ingredientsName.filter((item) => {
 			const elementNormalized = normalizeString(item);
 			return elementNormalized.includes(input);
@@ -287,10 +333,26 @@ function searchByIngredient(arr, input) {
 		// on envoie dans recipesWithMatchingIngredient les recettes ayant les index précédemment récupérés
 		recipesWithMatchingIngredient.push(arr[i]);
 	}
-	console.log(recipesWithMatchingIngredient);
+	// console.log(recipesWithMatchingIngredient);
 
 	let search = recipesWithMatchingIngredient;
 	removeDuplicate(search);
 	return search;
 	//on retourne les recettes ayant le même index que ceux des ingrédients qui matchent avec l'input
+}
+
+///////////////////
+// Appliance search
+/////////////////
+function searchByAppliance(arr, input) {
+	// recipesAppliances retourne les recettes ayant un appliance qui match avec l'input
+	const recipesWithMatchingAppliance = arr.filter((element) => {
+		const appliancesName = element.appliance;
+		// console.log(appliancesName);
+		return normalizeString(appliancesName).includes(input);
+	});
+	console.log(recipesWithMatchingAppliance);
+	let search = recipesWithMatchingAppliance;
+	removeDuplicate(search);
+	return search;
 }

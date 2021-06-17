@@ -7,17 +7,18 @@ import { displayRecipes } from './displayRecipes.js';
 class AdvancedSearchField {
 	constructor() {
 		this.createAdvancedSearchField = function (string) {
+			const placeholder = 'Rechercher un ' + normalizeString(string).slice(0, -1);
 			return `
 		<div class="fitler${string}">
 		  <div class="filters__search --${string}">
-			  <span class="filters__label" id="currentFilter"
+			  <span class="filters__label"
 				>${string}</span
 			  >
 			  <input
 				id="${string}Input"
 				type="text"
 				class="filters__input --${string}"
-				placeholder="${string}"
+				placeholder="${placeholder}"
 			  />
 			  <div class="arrow"></div>
 			</div>
@@ -424,3 +425,31 @@ function searchUstensil(arr, input) {
 	removeDuplicate(search);
 	return search;
 }
+
+///////////////////
+// Tags style gestion
+/////////////////
+const filterElementIngredient = document.querySelector('.filters__search.--Ingredients');
+
+filterElementIngredient.addEventListener('click', () => {
+	const IngredientsInput = document.querySelector('#IngredientsInput');
+	filterElementIngredient.classList.toggle('open');
+	IngredientsInput.value = '';
+	IngredientsInput.focus();
+});
+
+const filterElementAppliance = document.querySelector('.filters__search.--Appareils');
+filterElementAppliance.addEventListener('click', () => {
+	const AppareilsInput = document.querySelector('#AppareilsInput');
+	filterElementAppliance.classList.toggle('open');
+	AppareilsInput.value = '';
+	AppareilsInput.focus();
+});
+
+const filterElementUstensil = document.querySelector('.filters__search.--Ustenciles');
+filterElementUstensil.addEventListener('click', () => {
+	const UstencilesInput = document.querySelector('#UstencilesInput');
+	filterElementUstensil.classList.toggle('open');
+	UstencilesInput.value = '';
+	UstencilesInput.focus();
+});

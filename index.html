@@ -8,16 +8,20 @@
 		<!-- <link rel="stylesheet" href="style.css" /> -->
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css" />
 		<link rel="stylesheet" href="css/style.css" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" />
+		<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Roboto&display=swap" rel="stylesheet" />
 	</head>
 	<body>
 		<header class="header">
-			<h1 class="header__logo"><img class="header__logo" src="images/logo.png" alt="logo Les petits plats" /></h1>
+			<h1 class="header__logo">
+				<a href=""><img class="header__logo" src="images/logo.png" alt="logo Les petits plats" /></a>
+			</h1>
 		</header>
 		<main class="main">
 			<section class="search">
 				<form class="input" id="form">
-					<input type="text" id="searchInput" placeholder="Rechercher un ingrédient, appareil, ustensiles ou une recette." aria-label="Rechercher un ingrédient, appareil, ustensiles ou une recette." />
-					<i class="fas fa-search"></i>
+					<input type="text" id="searchInput" placeholder="Rechercher un ingrédient, appareil, ustensiles ou une recette." />
+					<i class="fas fa-search mGlass"></i>
 				</form>
 				<section class="tags">
 					<div class="tags__Ingredients"></div>

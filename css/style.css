@@ -239,13 +239,23 @@ time, mark, audio, video {
 }
 .search .filters {
   display: flex;
-  margin-top: 2rem;
   justify-content: flex-start;
   position: relative;
 }
 @media screen and (max-width: 1440px) {
   .search .filters {
     flex-direction: column;
+  }
+}
+.search .filters .filter {
+  margin-top: 20px;
+}
+.search .filters .filter:not(:last-child) {
+  margin-right: 20px;
+}
+@media screen and (max-width: 1440px) {
+  .search .filters .filter:not(:last-child) {
+    margin-right: 0px;
   }
 }
 .search .filters__search {
@@ -282,15 +292,6 @@ time, mark, audio, video {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
-.search .filters__search:not(:last-child) {
-  margin-right: 20px;
-}
-@media screen and (max-width: 1440px) {
-  .search .filters__search:not(:last-child) {
-    margin-right: 0px;
-    margin-top: 20px;
-  }
-}
 .search .filters__input {
   opacity: 0;
   font-size: 1.3rem;
@@ -308,15 +309,6 @@ time, mark, audio, video {
   color: #ffff;
   font-size: 18px;
 }
-.search .filters__input.--Appareil {
-  background-color: #ed6454;
-}
-.search .filters__input.--Ingredients {
-  background-color: #3282f7;
-}
-.search .filters__input.--Ustenciles {
-  background-color: #68d9a4;
-}
 .search .filters__label {
   width: 5rem;
   opacity: 1;
@@ -325,6 +317,7 @@ time, mark, audio, video {
 .search .filters__list {
   margin: 0px;
   width: 100%;
+  position: absolute;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
@@ -338,8 +331,13 @@ time, mark, audio, video {
   z-index: 2;
 }
 @media screen and (max-width: 1440px) {
-  .search .filters__list.--Ustenciles {
-    position: absolute;
+  .search .filters__list.--Appareils {
+    position: initial;
+  }
+}
+@media screen and (max-width: 1440px) {
+  .search .filters__list.--Ingredients {
+    position: initial;
   }
 }
 .search .filters__list__item {

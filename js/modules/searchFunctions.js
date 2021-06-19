@@ -1,79 +1,18 @@
 import { recipes } from './recipes.js';
 import { displayRecipes } from './displayRecipes.js';
+import { AdvancedSearchField } from './advancedSearch.js';
+import { normalizeString, removeDuplicate } from './normalizeFunctions.js';
 
 ///////////////////
-//Class advanced search
+//Global variables
 /////////////////
-class AdvancedSearchField {
-	constructor() {
-		this.createAdvancedSearchField = function (string) {
-			const placeholder = 'Rechercher un ' + normalizeString(string).slice(0, -1);
-			return `
-		<div class="fitler${string}">
-		  <div class="filters__search --${string}">
-			  <span class="filters__label"
-				>${string}</span
-			  >
-			  <input
-				id="${string}Input"
-				type="text"
-				class="filters__input --${string}"
-				placeholder="${placeholder}"
-			  />
-			  <div class="arrow"></div>
-			</div>
-			<ul
-			id="list${string}"
-			  class="filters__list --${string}"
-			></ul>
-			</div>`;
-		};
-	}
-}
-
-///////////////////
-//Remove doublons
-/////////////////
-function removeDuplicate(array) {
-	const duplicateElements = [];
-	const noDuplicate = array.filter((element) => {
-		if (element in duplicateElements) {
-			return false;
-		}
-		duplicateElements[element] = true;
-		return true;
-	});
-	return noDuplicate;
-}
-///////////////////
-//Normalize string
-/////////////////
-const normalizeString = (string) => {
-	return string.toLocaleLowerCase().replace(/\s+/g, '');
-};
-
-///////////////////
-//Create advanced search
-/////////////////
-const displayElements = () => {
-	const resultSection = document.querySelector('.result');
-	const searchFilter = document.querySelector('.filters');
-	// Display advanced search elemnts
-	const advancedSearchField = new AdvancedSearchField();
-
-	const ustensilAdvancedSearch = advancedSearchField.createAdvancedSearchField('Ustenciles');
-	searchFilter.insertAdjacentHTML('afterbegin', ustensilAdvancedSearch);
-
-	const applianceAdvancedSearch = advancedSearchField.createAdvancedSearchField('Appareils');
-	searchFilter.insertAdjacentHTML('afterbegin', applianceAdvancedSearch);
-
-	const ingredientsAdvancedSearch = advancedSearchField.createAdvancedSearchField('Ingredients');
-	searchFilter.insertAdjacentHTML('afterbegin', ingredientsAdvancedSearch);
-
-	// Display all recipes
-	resultSection.innerHTML = displayRecipes(recipes);
-};
-displayElements();
+let currentSearch;
+let IngredientsToDisplay;
+let ApplianceToDisplay;
+let UstensilsToDisplay;
+let arrayOfIngredientsTags = [];
+let arrayOfAppliancesTags = [];
+let arrayOfUstensilsTags = [];
 
 ///////////////////
 //Listen main input
@@ -106,14 +45,9 @@ searchInput.addEventListener('input', (e) => {
 
 const resultSection = document.querySelector('.result');
 
-let currentSearch;
-let IngredientsToDisplay;
-let ApplianceToDisplay;
-let UstensilsToDisplay;
-let arrayOfIngredientsTags = [];
-let arrayOfAppliancesTags = [];
-let arrayOfUstensilsTags = [];
-
+///////////////////
+//Get recipes by user input
+/////////////////
 const displayDataByserInput = (arr, input) => {
 	const recipesToDisplay = [];
 	//tableau contenant toutes les recettes ayant la chaine de caractères contenue dans l'input
@@ -135,6 +69,9 @@ const displayDataByserInput = (arr, input) => {
 
 currentSearch = displayDataByserInput(recipes, '');
 
+///////////////////
+//Display advanced search list elements
+/////////////////
 function displayAdvancedSearchListOfElement(arr, type, input, name) {
 	//tableau des éléments de liste
 	const arrayOfElements = arr.flatMap((element) => element[type]);
@@ -206,9 +143,6 @@ ustensilSearchInput.addEventListener('input', (e) => {
 	displayAdvancedSearchListOfElement(UstensilsToDisplay, 'ustensils', normalizedInput, 'Ustenciles');
 });
 
-///////////////////
-// Tags gestion
-/////////////////
 ///////////////////
 // Ingredients observer
 /////////////////
@@ -425,31 +359,3 @@ function searchUstensil(arr, input) {
 	removeDuplicate(search);
 	return search;
 }
-
-///////////////////
-// Tags style gestion
-/////////////////
-const filterElementIngredient = document.querySelector('.filters__search.--Ingredients');
-
-filterElementIngredient.addEventListener('click', () => {
-	const IngredientsInput = document.querySelector('#IngredientsInput');
-	filterElementIngredient.classList.toggle('open');
-	IngredientsInput.value = '';
-	IngredientsInput.focus();
-});
-
-const filterElementAppliance = document.querySelector('.filters__search.--Appareils');
-filterElementAppliance.addEventListener('click', () => {
-	const AppareilsInput = document.querySelector('#AppareilsInput');
-	filterElementAppliance.classList.toggle('open');
-	AppareilsInput.value = '';
-	AppareilsInput.focus();
-});
-
-const filterElementUstensil = document.querySelector('.filters__search.--Ustenciles');
-filterElementUstensil.addEventListener('click', () => {
-	const UstencilesInput = document.querySelector('#UstencilesInput');
-	filterElementUstensil.classList.toggle('open');
-	UstencilesInput.value = '';
-	UstencilesInput.focus();
-});

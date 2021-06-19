@@ -1,0 +1,9 @@
+//Header
+.header {
+	display: flex;
+	justify-content: center;
+	&__logo {
+		width: 268px;
+		margin-top: 42px;
+	}
+}

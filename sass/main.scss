@@ -325,7 +325,7 @@ $grey: #e7e7e7;
 		&__list {
 			margin: 0px;
 			width: 100%;
-			// position: absolute;
+			position: absolute;
 			display: flex;
 			justify-content: space-between;
 			flex-wrap: wrap;
@@ -337,9 +337,14 @@ $grey: #e7e7e7;
 			visibility: hidden;
 			display: none;
 			z-index: 2;
-			&.--Ustenciles {
+			&.--Appareils {
 				@media screen and (max-width: 1440px) {
-					position: absolute;
+					position: initial;
+				}
+			}
+			&.--Ingredients {
+				@media screen and (max-width: 1440px) {
+					position: initial;
 				}
 			}
 			&__item {

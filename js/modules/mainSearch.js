@@ -81,7 +81,7 @@ displayElements();
 const searchInput = document.querySelector('#searchInput');
 searchInput.addEventListener('input', (e) => {
 	const textInput = e.target.value.toLowerCase().replace(/\s+/g, '');
-	if (textInput.length >= 3) {
+	if (textInput.length > 2) {
 		//currentSearch prend la valeur des résultats de la recherche principale
 		currentSearch = displayDataByserInput(recipes, textInput);
 		resultSection.innerHTML = displayRecipes(currentSearch);

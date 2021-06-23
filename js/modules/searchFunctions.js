@@ -49,22 +49,16 @@ const resultSection = document.querySelector('.result');
 //Get recipes by user input
 /////////////////
 const displayDataByserInput = (arr, input) => {
-	const recipesToDisplay = [];
-	//tableau contenant toutes les recettes ayant la chaine de caractères contenue dans l'input
-	//Boucle sur les recettes
-	for (let i = 0; i < arr.length; i++) {
-		const name = normalizeString(arr[i].name);
-		const description = normalizeString(arr[i].description);
+	const recipesFiltered = arr.filter((element) => {
 		const recipeIngredients = [];
-		//Boucle sur les ingredients de la recette
-		for (let y = 0; y < arr[i].ingredients.length; y++) {
-			recipeIngredients.push(arr[i].ingredients[y].ingredient.toLocaleLowerCase());
+		for (let y = 0; y < element.ingredients.length; y++) {
+			recipeIngredients.push(element.ingredients[y].ingredient.toLocaleLowerCase());
 		}
-		if (name.includes(input) || description.includes(input) || normalizeString(recipeIngredients.toString()).includes(input)) {
-			recipesToDisplay.push(arr[i]);
-		}
-	}
-	return recipesToDisplay;
+		const check = normalizeString(element.name).includes(input) || normalizeString(element.description).includes(input) || recipeIngredients.includes(input);
+		return check;
+	});
+
+	return recipesFiltered;
 };
 
 currentSearch = displayDataByserInput(recipes, '');

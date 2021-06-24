@@ -30,7 +30,7 @@ export function displayRecipes(array) {
 
 			return `
 			<article class="recipe">
-				<img class="recipe__image" src="../images/recipePic.png" alt="${recipeName}" />
+				<img class="recipe__image" src="images/recipePic.png" alt="${recipeName}" />
 				<div class="recipe__content">
 					<header class="recipe__header">
 						<h2 class="recipe__title">${recipeName}</h2>
